@@ -15,7 +15,7 @@ export const signUpController = async (req: Request, res: Response) => {
       password: hashedPassword,
     });
     const savedUser = await user.save();
-    const token = savedUser.getJWT();
+    const token = await savedUser.getJWT();
     res.cookie("token", token, {
       expires: new Date(Date.now() + 24 * 3600000),
     });
@@ -30,11 +30,11 @@ export const loginController = async (req: Request, res: Response) => {
     const { emailId, password } = req.body;
     const user = await User.findOne({ emailId: emailId });
     if (!user) {
-      throw new Error("User does not exists");
+      return res.status(400).json({ message: "User does not exists" });
     }
     const isPasswordValid = await user.validatePassword(password);
     if (isPasswordValid) {
-      const token = user.getJWT();
+      const token = await user.getJWT();
       res.cookie("token", token, {
         expires: new Date(Date.now() + 24 * 3600000),
       });
