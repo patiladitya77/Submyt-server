@@ -1,7 +1,10 @@
 import express from "express";
 import connectDB from "./config/database";
+import authRouter from "./routes/authRoutes";
 const app = express();
 app.use(express.json());
+
+app.use("/api/auth", authRouter);
 
 connectDB().then(() => {
   console.log("Connection established");

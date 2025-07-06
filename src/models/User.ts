@@ -1,7 +1,18 @@
 import validator from "validator";
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
-const userSchema = new mongoose.Schema(
+export interface IUser extends Document {
+  username: string;
+  emailId: string;
+  name: string;
+  password: string;
+  getJWT(): string;
+  validatePassword(passwordEnteredByUser: string): Promise<boolean>;
+}
+
+const userSchema = new mongoose.Schema<IUser>(
   {
     username: {
       type: String,
@@ -41,7 +52,22 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+userSchema.methods.getJWT = async function () {
+  const user = this;
+  const token = await jwt.sign({ _id: user._id }, "jaggery", {
+    expiresIn: "1d",
+  });
+  return token;
+};
+userSchema.methods.validatePassword = async function (
+  passwordEnteredByUser: string
+): Promise<boolean> {
+  const user = this;
+  const { password } = user;
+  const isPasswordValid = await bcrypt.compare(passwordEnteredByUser, password);
+  return isPasswordValid;
+};
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model<IUser>("User", userSchema);
 
 export default User;
