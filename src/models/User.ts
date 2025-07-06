@@ -54,7 +54,11 @@ const userSchema = new mongoose.Schema<IUser>(
 );
 userSchema.methods.getJWT = async function () {
   const user = this;
-  const token = await jwt.sign({ _id: user._id }, "jaggery", {
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) {
+    throw new Error("Cannot get secret");
+  }
+  const token = jwt.sign({ _id: user._id }, jwtSecret, {
     expiresIn: "1d",
   });
   return token;

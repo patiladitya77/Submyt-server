@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
 
 const connectDB = async () => {
-  await mongoose.connect(
-    "mongodb+srv://adpatil587:adityaPATIL@cluster0.7encg.mongodb.net/submyt-db"
-  );
+  const mongourl = process.env.MONGODB_URL;
+  if (!mongourl) {
+    throw new Error("Cannot connect to DB");
+  }
+  await mongoose.connect(process.env.MONGODB_URL!);
   console.log("Connection with DB established");
 };
 

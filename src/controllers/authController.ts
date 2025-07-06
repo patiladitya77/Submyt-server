@@ -21,7 +21,7 @@ export const signUpController = async (req: Request, res: Response) => {
     });
     res.json({ message: "Sign up successfull", savedUser });
   } catch (error) {
-    res.json({ message: `${error}` });
+    res.status(400).json({ message: `${error}` });
   }
 };
 
