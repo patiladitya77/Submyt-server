@@ -24,7 +24,6 @@ export const userAuth = async (
     req.user = user as IUser;
     next();
   } catch (error) {
-    // console.error("Auth Middleware Error:", error);
     res.status(400).json({
       message: error instanceof Error ? error.message : "Unknown error",
     });

@@ -3,6 +3,7 @@ import Form from "../models/form";
 import { generateSlug } from "../utils/generateSlug";
 import { IUser } from "../models/User";
 import { nanoid } from "nanoid";
+import { validateEditFormData } from "../utils/validation";
 
 export const createFormController = async (
   req: Request,
@@ -20,7 +21,6 @@ export const createFormController = async (
     }
 
     let slug = generateSlug(title);
-    console.log(slug);
     slug = slug + "-" + nanoid(5);
     const newForm = new Form({
       title: title,
@@ -43,6 +43,50 @@ export const getFormsController = async (req: Request, res: Response) => {
       createdAt: -1,
     });
     res.json({ message: "Forms fetched successfully", forms });
+  } catch (error) {
+    res.status(400).json({ message: "Error" + error });
+  }
+};
+
+export const editFormController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const user = req.user as IUser;
+    const formId = req.params.formId;
+    const form = await Form.findById(formId);
+
+    if (!form) {
+      res.status(400).json({ message: "Form not found" });
+      return;
+    }
+    if (form.status === "published") {
+      res
+        .status(400)
+        .json({ message: "Cannot update form once it is published" });
+      return;
+    }
+
+    if (!validateEditFormData(req.body)) {
+      res.status(400).json({ message: "Cannot update these fields" });
+      return;
+    }
+
+    if (req.body.title) {
+      const segments = form.slug.split("-");
+      const oldId = segments[segments.length - 1];
+
+      const newSlug = generateSlug(req.body.title) + "-" + oldId;
+      form.slug = newSlug;
+    }
+
+    Object.keys(req.body).forEach((key) => {
+      (form as any)[key] = req.body[key];
+    });
+
+    await form.save();
+    res.json({ message: form });
   } catch (error) {
     res.status(400).json({ message: "Error" + error });
   }
