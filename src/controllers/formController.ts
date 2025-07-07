@@ -35,3 +35,15 @@ export const createFormController = async (
     res.status(400).json({ message: error });
   }
 };
+
+export const getFormsController = async (req: Request, res: Response) => {
+  try {
+    const user = req.user as IUser;
+    const forms = await Form.find({ ownerId: user._id }).sort({
+      createdAt: -1,
+    });
+    res.json({ message: "Forms fetched successfully", forms });
+  } catch (error) {
+    res.status(400).json({ message: "Error" + error });
+  }
+};
