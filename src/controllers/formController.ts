@@ -91,3 +91,13 @@ export const editFormController = async (
     res.status(400).json({ message: "Error" + error });
   }
 };
+
+export const deleteFormController = async (req: Request, res: Response) => {
+  try {
+    const formId = req.params.formId;
+    await Form.findByIdAndDelete(formId);
+    res.json({ message: "form deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ message: "error while deleting" + error });
+  }
+};
