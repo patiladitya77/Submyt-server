@@ -13,7 +13,15 @@ export const validateSignUpdata = (req: any) => {
 };
 
 export const validateEditFormData = (body: IUpdateForm) => {
-  const allowedUpdates = ["title", "description", "fields"];
+  const allowedUpdates = ["title", "description", "fields", "validity"];
+  const isUpdateValid = Object.keys(body).every((field) =>
+    allowedUpdates.includes(field)
+  );
+  return isUpdateValid;
+};
+
+export const validateEditValidityData = (body: IUpdateForm) => {
+  const allowedUpdates = ["validity"];
   const isUpdateValid = Object.keys(body).every((field) =>
     allowedUpdates.includes(field)
   );

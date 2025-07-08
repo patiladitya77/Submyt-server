@@ -13,4 +13,5 @@ export interface IUpdateForm {
   title: string;
   description: string;
   fields: IUpdateField[];
+  validity: Date;
 }

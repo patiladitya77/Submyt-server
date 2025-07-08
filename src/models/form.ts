@@ -19,7 +19,8 @@ interface IForm extends Document {
   slug: string;
   ownerId: Types.ObjectId;
   fields: IField[];
-  status: String;
+  status: string;
+  validity: Date;
 }
 
 const fieldSchema = new mongoose.Schema<IField>({
@@ -89,6 +90,10 @@ const formSchema = new mongoose.Schema<IForm>(
       type: String,
       enum: ["draft", "published"],
       default: "draft",
+    },
+    validity: {
+      type: Date,
+      required: false,
     },
   },
   {
