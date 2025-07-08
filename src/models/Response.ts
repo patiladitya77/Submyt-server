@@ -1,5 +1,6 @@
 import mongoose, { Types } from "mongoose";
 interface IFormAnswer extends Document {
+  fieldType: string;
   fieldId: string;
   answer: string | number | string[] | boolean | null;
 }
@@ -18,6 +19,7 @@ const responseSchema = new mongoose.Schema<IResponse>(
     answers: [
       {
         fieldName: String,
+        fieldType: String,
         answer: mongoose.Schema.Types.Mixed,
       },
     ],
@@ -27,5 +29,5 @@ const responseSchema = new mongoose.Schema<IResponse>(
   }
 );
 
-const Response = mongoose.model("Response", responseSchema);
-export default Response;
+const ResponseModel = mongoose.model("ResponseModel", responseSchema);
+export default ResponseModel;

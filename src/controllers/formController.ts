@@ -133,3 +133,23 @@ export const editFormValidityController = async (
     res.status(400).json({ message: "Error" + error });
   }
 };
+
+export const publishFormController = async (req: Request, res: Response) => {
+  try {
+    const formId = req.params.formId;
+    const form = await Form.findById(formId);
+    if (!form) {
+      res.json({ message: "Form not found" });
+      return;
+    }
+    if (form.status === "published") {
+      res.status(400).json({ message: "Form is already published" });
+      return;
+    }
+    form.status = "published";
+    await form.save();
+    res.json({ message: "Form published successfully", form });
+  } catch (error) {
+    res.status(400).json({ message: "Error" + error });
+  }
+};
