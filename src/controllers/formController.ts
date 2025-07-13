@@ -14,14 +14,14 @@ export const createFormController = async (
 ): Promise<void> => {
   try {
     const user = req.user as IUser;
-    const { title, description, fields, validity } = req.body;
+    const { title, description } = req.body;
     if (!title || typeof title !== "string" || title.trim() === "") {
       res.status(400).json({ message: "Title is required." });
     }
 
-    if (!Array.isArray(fields) || fields.length === 0) {
-      res.status(400).json({ message: "Form must have at least one field." });
-    }
+    // if (!Array.isArray(fields) || fields.length === 0) {
+    //   res.status(400).json({ message: "Form must have at least one field." });
+    // }
 
     let slug = generateSlug(title);
     slug = slug + "-" + nanoid(5);
@@ -30,13 +30,21 @@ export const createFormController = async (
       description: description,
       slug: slug,
       ownerId: user._id,
-      fields: fields,
-      validity: validity,
     });
     const savedForm = await newForm.save();
     res.json({ message: "Form created successfully", savedForm });
   } catch (error) {
     res.status(400).json({ message: error });
+  }
+};
+export const getFormByIdController = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const formId = req.params.formId;
+    const getForm = await Form.findById(formId);
+    res.json({ message: "Form fetched successfully", getForm });
+  } catch (error) {
+    res.status(400).json({ message: "Error getting form" + error });
   }
 };
 
